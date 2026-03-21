@@ -1,2 +1,0 @@
-CREATE SEQUENCE IF NOT EXISTS sale_number_seq
-START WITH 1;
