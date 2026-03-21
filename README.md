@@ -1,6 +1,12 @@
 # 🛒 SalesFlow API
 
 Sistema backend para gestión de ventas, inventario y tiendas multi-rol desarrollado con **Spring Boot**.
+## 📌 Quick Overview
+
+- Backend: Spring Boot
+- Database: PostgreSQL (Docker)
+- Auth: JWT
+- Testing: JUnit + Mockito
 
 ---
 
