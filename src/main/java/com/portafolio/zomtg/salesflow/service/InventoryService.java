@@ -98,18 +98,6 @@ public class InventoryService {
         repository.save(inventory);
         return inventory.toString();
 
-
-
-//        InventoryMovement inventory = new InventoryMovement();
-//        inventory.setDateTime(LocalDateTime.now());
-//        inventory.setReferenceId(referenceId);
-//        inventory.setProductId(productId);
-//        inventory.setQuantity(quantity);
-//        inventory.setType(TypeInventory.CREATE_PRODUCT);
-//        inventory.setPreviousStock(previusStock);
-//        inventory.setNewStock(newStock);
-//        repository.save(inventory);
-//        return inventory.toString();
     }
     public  String adjustQuantity(UUID referenceId,UUID productId,int quantity,int previusStock,int newStock){
         InventoryMovement inventory = new InventoryMovement();
@@ -138,13 +126,8 @@ public class InventoryService {
     }
 
 
-    /*
-     this.productId = productId;
-        this.type = type;
-        this.quantity = quantity;
-        this.dateTime = dateTime;
-        this.referenceId = referenceId;
-     */
+
+
     public List<InventoryMovement> getInventoryMovements(String username,UUID productId){
         User owner=userRepository.findUserByUsername(username).orElseThrow(()->new InvalidCredentials("Username not found"));
         Product product=productRepository.findById(productId).orElseThrow(()->new ProductNoFound("Product not found"));

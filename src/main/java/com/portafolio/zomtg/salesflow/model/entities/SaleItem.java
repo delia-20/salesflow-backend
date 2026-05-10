@@ -2,6 +2,7 @@ package com.portafolio.zomtg.salesflow.model.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 
 import java.util.UUID;
 
@@ -16,13 +17,13 @@ public class SaleItem {
     @Column(nullable = false)
     private  UUID productId;
     @Column(nullable = false)
-    @Positive
+    @PositiveOrZero
     private int quantity;
     @Column(nullable = false)
-    @Positive
+    @PositiveOrZero
     private double priceAtMoment;
     @Column(nullable = false)
-    @Positive
+    @PositiveOrZero
     private double subtotal;
 
     public SaleItem(UUID saleId, UUID productId, int quantity, double priceAtMoment, double subtotal) {

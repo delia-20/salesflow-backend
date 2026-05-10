@@ -25,72 +25,44 @@ public class UserController {
         this.userService = userService;
     }
 
-//    @PostMapping("users/save-user")
-//    public void saveUser(@RequestBody User user){
-//        userService.saveUser(user);
-//    }
-//
-//    @GetMapping("users/get-all-users")
-//    public List<User> getUsers() {
-//        return userService.getAllUsers();
-//    }
 
-    //registrar usuario
+
     @PostMapping("auth/register")
     public ResponseEntity<?> registerUser(@RequestBody User user){
-        try {
-            boolean result=userService.saveUser(user);
-            if(result)
-                return ResponseEntity.status(HttpStatus.CREATED).body("User saved successfully");
-            else
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error saving user");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving user");
-        }
 
+        User result=userService.saveUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of( "User saved successfully", result));
     }
 
-    // 🟢 Crear usuario
+
     @PostMapping("users")
-    public ResponseEntity<String> saveUser(@RequestBody User user) {
-        try {
-            boolean result=userService.saveUser(user);
-            if(result==true)
-                return ResponseEntity.status(HttpStatus.CREATED).body("User saved successfully");
-            else
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error saving user");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
-        }
+    public ResponseEntity<?> saveUser(@RequestBody User user) {
+
+        User result=userService.saveUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("User Saved successfully", result));
     }
 
-    // 🟢 Obtener todos los usuarios para pruebas
+
     @GetMapping("users")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
-        if (users.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
         return ResponseEntity.ok(users);
     }
 
-    //
+
     @GetMapping("users/{id}")
     public ResponseEntity<?> getUserById(@PathVariable String id) {
-        Optional<User> result =userService.getUserById(UUID.fromString(id));
-        if (result.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error","no found"));
-        }
-        return ResponseEntity.ok(result.get());
+        User result =userService.getUserById(UUID.fromString(id));
+
+        return ResponseEntity.ok(result);
     }
 
-    @DeleteMapping("/users")//
+    @DeleteMapping("/users")
     public ResponseEntity<?> deleteUserById(@RequestParam String id) {
         UUID uuid = UUID.fromString(id.replace("\"", "").trim());
-        if(userService.deleteUserById(uuid)){
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("User deleted successfully");
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        userService.deleteUserById(uuid);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("User deleted successfully");
+
     }
 
 }

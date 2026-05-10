@@ -1,6 +1,7 @@
 package com.portafolio.zomtg.salesflow.service;
 
 import com.portafolio.zomtg.salesflow.exception.InvalidCredentials;
+import com.portafolio.zomtg.salesflow.exception.ObjectNotFound;
 import com.portafolio.zomtg.salesflow.model.entities.Store;
 import com.portafolio.zomtg.salesflow.model.entities.User;
 import com.portafolio.zomtg.salesflow.repository.StoreRepository;
@@ -24,30 +25,27 @@ public class StoreService {
         this.userRepository = userRepository;
     }
 
-    public boolean saveStore(Store store,String username) {
+    public Store saveStore(Store store,String username) {
         User owner=userRepository.findUserByUsername(username).orElseThrow(()->new InvalidCredentials("User Not Found"));
         UUID ownerId=owner.getOwnerId();
         store.setOwnerId(ownerId);
         store.setPassword(passwordEncoder.encode(store.getPassword()));
-        storeRepository.save(store);
-
-        return true;
+        store=storeRepository.save(store);
+        return store;
     }
 
     public Store getStore(UUID storeId, String username) {
-        System.out.println("id "+storeId+ " username "+username);
-        Store s=storeRepository.findById(storeId).orElseThrow();
-        System.out.println("store "+s.toString());
-       User owner=userRepository.findUserByUsername(username).orElseThrow();
-       if(s.getOwnerId().equals(owner.getOwnerId())){
+        Store s=storeRepository.findById(storeId).orElseThrow(()-> new ObjectNotFound("Store Not Found"));
+        User owner=userRepository.findUserByUsername(username).orElseThrow(()->new ObjectNotFound("User Not Found"));
+        if(s.getOwnerId().equals(owner.getOwnerId())){
            return s;
-       }
-      throw new InvalidCredentials("Inappropriate credentials");
+        }
+       throw new InvalidCredentials("Inappropriate credentials");
 
     }
     public boolean deleteStore(UUID storeId, String username) {
-        Store store=storeRepository.findById(storeId).orElseThrow();
-        User owner=userRepository.findUserByUsername(username).orElseThrow();
+        Store store=storeRepository.findById(storeId).orElseThrow(()-> new ObjectNotFound("Store Not Found"));
+        User owner=userRepository.findUserByUsername(username).orElseThrow(()->new ObjectNotFound("User Not Found"));
 
         if(store.getOwnerId().equals(owner.getOwnerId())) {
             storeRepository.delete(store);

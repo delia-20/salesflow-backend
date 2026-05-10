@@ -1,5 +1,6 @@
 package com.portafolio.zomtg.salesflow.service;
 
+import com.portafolio.zomtg.salesflow.exception.BusinessOperationException;
 import com.portafolio.zomtg.salesflow.exception.InvalidCredentials;
 import com.portafolio.zomtg.salesflow.model.dto.ProductDTO;
 import com.portafolio.zomtg.salesflow.model.entities.Product;
@@ -8,7 +9,9 @@ import com.portafolio.zomtg.salesflow.model.entities.User;
 import com.portafolio.zomtg.salesflow.repository.ProductRepository;
 import com.portafolio.zomtg.salesflow.repository.StoreRepository;
 import com.portafolio.zomtg.salesflow.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,6 +32,7 @@ public class ProductService {
         this.inventoryService = inventoryService;
     }
 
+    @Transactional
     public Product save (Product product, String username) {
         System.out.println("storeid " + product.getStoreId());
         User owner = userRepository.findUserByUsername(username).orElseThrow();
@@ -39,15 +43,18 @@ public class ProductService {
         if (!store.getOwnerId().equals(owner.getOwnerId())) {
             throw new InvalidCredentials("Invalid credentials");
         }
+        try {
 
             store.setNumProducts(store.getNumProducts() + 1);//
             store.setNumTotalItems(store.getNumTotalItems() + product.getExistence());
             storeRepository.save(store);
             productRepository.save(product);
-            inventoryService.addNewProduct(owner.getOwnerId(),product.getId(),quantity);
-          //  System.out.println(inventoryMovement);
+            inventoryService.addNewProduct(owner.getOwnerId(), product.getId(), quantity);
 
             return product;
+        }catch (ObjectOptimisticLockingFailureException e) {
+            throw new BusinessOperationException("Not enough products");
+        }
     }
 
 

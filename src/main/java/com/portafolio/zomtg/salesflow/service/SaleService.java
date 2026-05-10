@@ -13,6 +13,7 @@ import com.portafolio.zomtg.salesflow.model.enums.StatusSale;
 import com.portafolio.zomtg.salesflow.repository.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,12 +56,11 @@ public class SaleService {
     }
 
 
-
+    @Transactional
     public Sale createSale(SalesRequestDTO request, String username) {
         User owner = userRepository.findUserByUsername(username)
                 .orElseThrow(()-> new InvalidCredentials("No allowed actions"));
         UUID userId;
-
         if(owner.getRole().equals(Role.EMPLOYEE) ){
             if(owner.getStoreId().equals(request.getStoreId())){
                 userId=owner.getId();
@@ -71,6 +71,7 @@ public class SaleService {
             Store store=storeRepository.findById(request.getStoreId()).orElseThrow(()-> new ObjectNotFound("Store not found"));
             if(store.getOwnerId().equals(owner.getOwnerId())){
                 userId=owner.getId();
+
                return saveSale(request,userId);
 
             }
@@ -78,6 +79,7 @@ public class SaleService {
         throw  new InvalidCredentials("No allowed actions");
     }
 
+@Transactional
     public Sale saveSale(SalesRequestDTO request,UUID id) {
 
         Sale sale = new Sale();
@@ -106,11 +108,6 @@ public class SaleService {
             int quantity=itemDTO.getQuantity();
             inventoryService.createSale(sale.getId(),product.getId(),quantity);
 
-
-//            if(product.getExistence()<quantity)
-//                throw new NoEnoughStockException("Not enough stock for product " + product.getName());
-//            product.setExistence(product.getExistence()-quantity);
-//            productRepository.save(product);
             double subtotal=product.getPrice()*quantity;
             total+=subtotal;
             SaleItem saleItem= new SaleItem(
@@ -142,7 +139,7 @@ public class SaleService {
     }
 
 
-
+    @Transactional
     public Receipt createTicket(UUID saleId, String username) {
         User owner = userRepository.findUserByUsername(username).orElseThrow(()->new ObjectNotFound("User Not Found"));
         Sale sale = saleRepository.findById(saleId).orElseThrow(()->new ObjectNotFound("Sale not found"));
@@ -170,6 +167,7 @@ public class SaleService {
         return null;
 
     }
+    @Transactional
     public Sale cancelledSale(UUID saleId,String username) {
         User owner = userRepository.findUserByUsername(username).orElseThrow();
         Sale sale = saleRepository.findById(saleId).orElseThrow();
@@ -186,7 +184,7 @@ public class SaleService {
 
         return cancelSale(sale);
     }
-
+    @Transactional
     public Sale cancelSale(Sale sale) {
         UUID saleId = sale.getId();
         List<SaleItem> items=saleItemRepository.findBySaleId(saleId);

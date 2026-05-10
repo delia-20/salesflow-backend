@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,9 +27,11 @@ public class Store {
     @Column(nullable = false)
     @Email(message = "email cannot be empty")
     private String email;
-    
+    @PositiveOrZero
     private int numEmployees;
+    @PositiveOrZero
     private int numProducts;//cantidad en categoria no cantidad total de items
+    @PositiveOrZero
     private int numTotalItems;
     @Getter
     @Setter

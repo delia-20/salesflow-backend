@@ -28,7 +28,6 @@ public class InventoryHistoryController {
     @GetMapping("product/{productId}")
     public ResponseEntity<?> getProduct(@PathVariable("productId") UUID productId, Authentication authentication){
         String username=authentication.getName();
-        System.out.println("username:"+username);
         List<InventoryMovement> movements= inventoryService.getInventoryMovements(username,productId);
         return ResponseEntity.status(HttpStatus.OK).body(movements);
     }

@@ -89,7 +89,6 @@ public class SaleServiceTest {
                 "image",
                 "category",
                 3,
-                true,
                 storeId
         );
         product.setId(productId);
@@ -129,7 +128,7 @@ public class SaleServiceTest {
         Sale sale1=sales.get(0);
         Sale sale2=sales.get(1);
         assertEquals(storeId, sale2.getStoreId());
-        assertEquals(userId, sale2.getEmployeeId());
+          assertEquals(userId, sale2.getEmployeeId());
         assertEquals(StatusSale.IN_PROGRESS, sale2.getStatus());
         assertEquals("saleNumber", sale2.getSaleNumber());
         assertEquals(5.0, sale2.getTotal());
@@ -147,7 +146,6 @@ public class SaleServiceTest {
                 "image",
                 "category",
                 3,
-                true,
                 storeId
         );
         product.setId(productId);
@@ -155,7 +153,6 @@ public class SaleServiceTest {
         user.setId(userId);
         user.setUsername(username);
         user.setRole(Role.EMPLOYEE);
-        //employee need have a ownerId(owner of store where work) and storeID(store where is employee)
         user.setStoreId(storeId);
         user.setOwnerId(ownerId);
 
@@ -208,7 +205,6 @@ public class SaleServiceTest {
                 "image",
                 "category",
                 3,
-                true,
                 storeId
         );
         product.setId(productId);
@@ -251,7 +247,6 @@ public class SaleServiceTest {
                 "image",
                 "category",
                 3,
-                true,
                 storeId
         );
         product.setId(productId);

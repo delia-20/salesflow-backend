@@ -73,33 +73,6 @@ public class DashboardClientService {
         return result;
 
     }
-//    public Map<Sale,Object[]> getClientSalesHistory(String username){
-//        Client client=clientRepository.findByUsername(username).orElseThrow(()->  new InvalidCredentials("You are not allowed"));
-//        List<Sale> sales=saleRepository.findByClientId(client.getId());
-//        Map<String,Object[]> map=new HashMap<>();
-//
-//        for(Sale sale:sales){
-//            String saleData=sale.toString();
-//            List<SalesItemsRequestDTO> items=new ArrayList<>();
-//            List<SaleItem> saleItem=saleItemRepository.findBySaleId(sale.getId());
-//            for(SaleItem saleI:saleItem){
-//                Product p=productRepository.findById(saleI.getProductId()).get();
-//                SalesItemsRequestDTO item = new SalesItemsRequestDTO(
-//                        saleI.getProductId(),
-//                        saleI.getQuantity(),
-//                        saleI.getPriceAtMoment(),
-//                        saleI.getSubtotal(),
-//                        p.getName()
-//                        );
-//                items.add(item);
-//            }
-//            map.put(saleData,items.toArray());
-//
-//
-//        }
-//        return map;
-//
-//    }
 
 
 

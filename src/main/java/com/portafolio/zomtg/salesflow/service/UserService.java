@@ -1,5 +1,8 @@
 package com.portafolio.zomtg.salesflow.service;
 
+import com.portafolio.zomtg.salesflow.exception.BusinessOperationException;
+import com.portafolio.zomtg.salesflow.exception.InvalidCredentials;
+import com.portafolio.zomtg.salesflow.exception.ObjectNotFound;
 import com.portafolio.zomtg.salesflow.model.entities.Store;
 import com.portafolio.zomtg.salesflow.model.entities.User;
 import com.portafolio.zomtg.salesflow.model.enums.Role;
@@ -26,18 +29,17 @@ public class UserService {
         this.storeRepository = storeRepository;
     }
 
-    public boolean saveUser(User user) {
+    public User saveUser(User user) {
         System.out.println("Saving user: " + user);
         if(verifyExistingUser(user.getUsername()) || verifyExistingUser(user.getEmail())){
-            System.out.println("User already exists"+user.getRole().name());
-            return false;
+             throw new BusinessOperationException("User already exists");
         }
 
         if(Role.EMPLOYEE.equals(user.getRole())){
             if(user.getOwnerId() == null || user.getStoreId() == null){
-                return false;
+                throw new BusinessOperationException("User doesn't have an owner or store id");
             }else if(!userRepository.existsOwnerByOwner(user.getOwnerId()) || !existStoreAndOwner(user.getOwnerId(),user.getStoreId())){
-                return false;
+                throw new InvalidCredentials("user doesn't have an owner or store id");
 
             }
         }
@@ -46,11 +48,10 @@ public class UserService {
         if (Role.OWNER.equals(user.getRole())) {
 
             user.setOwnerId(UUID.randomUUID());
-          //  user.setStoreId(UUID.randomUUID());
         }
 
-        userRepository.save(user);
-        return true;
+        user=userRepository.save(user);
+        return user;
     }
 
     private boolean existStoreAndOwner(UUID ownerId, UUID storeId) {
@@ -66,24 +67,24 @@ public class UserService {
         return false;
     }
 
-    // 🟢 Get all users
+
     public List<User> getAllUsers() {
         System.out.println("Fetching all users");
         return userRepository.findAll();
     }
 
-    // 🟢 Find by name + surname
+
     public Optional<User> getUserByName(String name, String surname) {
         return userRepository.findUserByNameAndSurname(name, surname);
     }
 
-    // 🟢 Find by ID (UUID)
-    public Optional<User> getUserById(UUID id) {
 
-         return userRepository.findUserById(id);
+    public User getUserById(UUID id) {
+        User user= userRepository.findUserById(id).orElseThrow(() -> new ObjectNotFound("User not found"));
+        return user;
     }
 
-    // 🟡 Update password
+
     public boolean updatePassword(UUID id, String newPassword, String oldPassword) {
         Optional<User> optionalUser = userRepository.findUserById(id);
         if (optionalUser.isPresent()) {
@@ -99,13 +100,13 @@ public class UserService {
         return false;
     }
 
-    // 🟣 Verify existing user by email OR username
+
     public boolean verifyExistingUser(String emailOrUsername) {
         return userRepository.existsByEmail(emailOrUsername)
                 || userRepository.existsByUsername(emailOrUsername);
     }
 
-    // 🔵 Update email
+
     public boolean updateEmail(UUID id, String newEmail) {
         Optional<User> optionalUser = userRepository.findUserById(id);
         if (optionalUser.isPresent()) {
@@ -117,19 +118,13 @@ public class UserService {
         return false;
     }
 
-    // 🔴 Delete user by ID
-    public boolean deleteUserById(UUID id) {
+    public void deleteUserById(UUID id) {
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
-            return true;
+
         }
-        return false;
+        throw new InvalidCredentials("User doesn't exist");
     }
-
-
-    
-
-
 
     public boolean updateRole(UUID ownerId, UUID employeeId, String newRole, String ownerPassword) {
         Optional<User> optionalOwner = userRepository.findUserById(ownerId);
@@ -158,10 +153,6 @@ public class UserService {
             throw new RuntimeException("Invalid role: " + newRole);
         }
     }
-
-    //delete userById
-
-    //delete user byEmail
 
 
 

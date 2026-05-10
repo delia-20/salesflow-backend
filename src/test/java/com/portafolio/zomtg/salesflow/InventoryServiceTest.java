@@ -10,7 +10,6 @@ import com.portafolio.zomtg.salesflow.repository.ProductRepository;
 import com.portafolio.zomtg.salesflow.repository.StoreRepository;
 import com.portafolio.zomtg.salesflow.repository.UserRepository;
 import com.portafolio.zomtg.salesflow.service.InventoryService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -66,7 +65,6 @@ public class InventoryServiceTest {
                 "image",
                 "category",
                 3,
-                true,
                 storeId
         );
 
@@ -107,7 +105,6 @@ public class InventoryServiceTest {
                 "image",
                 "category",
                 3,
-                true,
                 storeId
         );
         when(productRepository.findById(productId)).thenReturn(Optional.of(product));
@@ -126,7 +123,6 @@ public class InventoryServiceTest {
                 "image",
                 "category",
                 3,
-                true,
                 storeId
         );
         when(productRepository.findById(productId)).thenReturn(Optional.of(product));

@@ -44,9 +44,6 @@ public class EmployeeController {
         List<ClientSaleHistoryDTO> sales=dashboard.groupSalesPerWeekResume(authentication.getName());
         return ResponseEntity.ok(sales);
     }
- 
-
-
 
     //administrar productos
 

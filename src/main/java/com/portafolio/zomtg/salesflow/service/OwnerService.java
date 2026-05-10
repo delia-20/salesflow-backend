@@ -44,13 +44,13 @@ public class OwnerService {
         throw  new InvalidCredentials("actions no allowed");
     }
 
-    //
+
     public List<User> getEmployeesByOwnerId(String username) {
         User owner = userRepository.findUserByUsername(username).orElseThrow(()->new InvalidCredentials("Username not found"));
         UUID ownerId = owner.getOwnerId();
         List<User> employees=userRepository.findByOwnerIdAndRole(ownerId,Role.EMPLOYEE);
         return employees;
     }
-    //
+
 
 }

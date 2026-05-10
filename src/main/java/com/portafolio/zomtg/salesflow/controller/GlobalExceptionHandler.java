@@ -41,11 +41,11 @@ public class GlobalExceptionHandler {
         return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
     }
 
-    @ExceptionHandler(SuccessOperationException.class)
-    public ResponseEntity<?> handleSuccessOperation(SuccessOperationException ex){
+    @ExceptionHandler(BusinessOperationException.class)
+    public ResponseEntity<?> handleSuccessOperation(BusinessOperationException ex){
         Map<String,String> map = new HashMap<>();
         map.put("message",ex.getMessage());
-        return  ResponseEntity.status(HttpStatus.ACCEPTED).body(map);
+        return  ResponseEntity.status(HttpStatus.CONFLICT).body(map);
 
     }
     @ExceptionHandler(ObjectNotFound.class)
@@ -55,4 +55,6 @@ public class GlobalExceptionHandler {
         return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
 
     }
+
+
 }

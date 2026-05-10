@@ -6,6 +6,7 @@ import com.portafolio.zomtg.salesflow.model.enums.PaymentMethod;
 import com.portafolio.zomtg.salesflow.model.enums.StatusSale;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -22,7 +23,7 @@ public class Sale {
     private UUID employeeId;
     private LocalDateTime datetime;
     @Column(nullable = false)
-    @Positive
+    @PositiveOrZero
     private double total;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

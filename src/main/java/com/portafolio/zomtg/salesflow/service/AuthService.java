@@ -40,12 +40,10 @@ public class AuthService {
             return new AuthResponseDTO(token,user);
 
     }
-//    public String loginToken(User user) {
-//        return jwtService.getToken(user);
-//    }
+//
 
 
-    // 🟢 Find by username OR email
+
     public Optional<User> findByEmail(String usernameOrEmail) {
         Optional<User> user = authRepository.findByEmail(usernameOrEmail);
         if (user.isEmpty()) {
@@ -63,13 +61,14 @@ public class AuthService {
         }
         if(client.isPresent()){
             Client cli=client.get();
-            if(passwordEncoder.matches(request.getPassword(), cli.getPassword())){
+            if(passwordEncoder.matches(request.getPassword(), cli.getPassword()))
                 return client;
-            }
+            throw new InvalidCredentials("Invalid password");
+
         }else {
-            return Optional.empty();
+            throw new InvalidCredentials("Invalid email or password");
         }
-        return client;
+
 
     }
 

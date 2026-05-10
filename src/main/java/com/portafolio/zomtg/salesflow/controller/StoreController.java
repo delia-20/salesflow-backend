@@ -25,11 +25,9 @@ public class StoreController {
     @PostMapping("store")
     public ResponseEntity<?> saveStore(@RequestBody Store store, Authentication authentication) {
         String username = authentication.getName();
-       Boolean result= storeService.saveStore(store,username);
-       if(result==true){
-           return ResponseEntity.ok().build();
-       }
-       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        Store store1=storeService.saveStore(store,username);
+        return ResponseEntity.ok().body(store1);
+
     }
 
     @PreAuthorize("hasRole('OWNER')")
@@ -42,9 +40,7 @@ public class StoreController {
 
         Store result = storeService.getStore(storeId, username);
 
-        return result == null
-                ? ResponseEntity.notFound().build()
-                : ResponseEntity.ok(result);
+        return  ResponseEntity.ok(result);
     }
     @PreAuthorize("hasRole('OWNER')")
     @GetMapping("stores")
@@ -60,8 +56,8 @@ public class StoreController {
     @DeleteMapping("store/{storeId}")
     public ResponseEntity<?> deleteStore(@PathVariable UUID storeId,Authentication authentication) {
         String username = authentication.getName();
-        boolean result= storeService.deleteStore(storeId,username);
-            return ResponseEntity.ok().build();
+        storeService.deleteStore(storeId,username);
+        return ResponseEntity.ok().build();
 
     }
 }

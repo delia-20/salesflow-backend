@@ -3,6 +3,7 @@ package com.portafolio.zomtg.salesflow.model.entities;
 import com.portafolio.zomtg.salesflow.model.enums.TypeInventory;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 
 
 import java.time.LocalDateTime;
@@ -20,11 +21,11 @@ public class InventoryMovement {
     @Enumerated(EnumType.STRING)
     private TypeInventory type;
     @Column(nullable = false)
-    @Positive
+    @PositiveOrZero
     private int quantity;
-    @Positive
+    @PositiveOrZero
     private int previousStock;
-    @Positive
+    @PositiveOrZero
     private int newStock;
     @Column(nullable = false)
     private LocalDateTime dateTime;

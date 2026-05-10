@@ -2,6 +2,7 @@ package com.portafolio.zomtg.salesflow.model.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 
 
@@ -17,27 +18,30 @@ public class Product {
     private String name;
     private String description;
     @Column(nullable = false)
-    @Positive
+    @PositiveOrZero
     private double price;
     @Column(nullable = false)
     private String image;
     @Column(nullable = false)
     private String category;
     @Column(nullable = false)
-    @Positive
+    @PositiveOrZero
     private int existence;
     private boolean active;
     @Column( nullable = false)
     private UUID storeId;
 
-    public Product(String name, String description, double price, String image, String category, int existence, boolean active, UUID storeId) {
+    @Version
+    private Long version;
+
+    public Product(String name, String description, double price, String image, String category, int existence, UUID storeId) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.image = image;
         this.category = category;
         this.existence = existence;
-        this.active = active;
+        this.active = true;
         this.storeId = storeId;
     }
 

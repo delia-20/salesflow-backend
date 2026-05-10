@@ -75,7 +75,6 @@ public class ProductServiceTest {
                 "image",
                 "category",
                 3,
-                true,
                 storeId
         );
         product.setId(productId);
@@ -118,7 +117,6 @@ public class ProductServiceTest {
                 "image",
                 "category",
                 3,
-                true,
                 storeId
         );
         product.setId(productId);
@@ -152,7 +150,6 @@ public class ProductServiceTest {
                 "image",
                 "category",
                 3,
-                true,
                 storeId
         );
         product.setId(productId);
@@ -199,7 +196,6 @@ public class ProductServiceTest {
                 "image",
                 "category",
                 3,
-                true,
                 storeId
         );
 
@@ -233,7 +229,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void shouldReturnNull_whenUserDoesNotOwnStore(){
+    public void shouldReturnInvalidCredentials_whenUserDoesNotOwnStore(){
 
         user = new User();
         user.setOwnerId(UUID.randomUUID());
@@ -247,10 +243,10 @@ public class ProductServiceTest {
 
         when(storeRepository.findById(storeId))
                 .thenReturn(Optional.of(store));
-
-        List<Product> result = productService.getByStore(username, storeId);
-
-        assertNull(result);
+        assertThrows(InvalidCredentials.class, () -> productService.getByStore(username, storeId));
+//        List<Product> result = productService.getByStore(username, storeId);
+//
+//        assertNull(result);
 
         verify(productRepository, never()).findByStoreId(any());
     }

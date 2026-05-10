@@ -36,10 +36,6 @@ public class SaleController {
         String username = authentication.getName();
         Sale result =saleService.createSale(request,username);
         return ResponseEntity.ok().body(result);
-//        if (result != null) {
-//            return ResponseEntity.ok().body(result);
-//        }
-//        return ResponseEntity.notFound().build();
     }
 
     @PostMapping("online/sales")
@@ -56,9 +52,6 @@ public class SaleController {
         String username = authentication.getName();
         Receipt receipt=saleService.createTicket(saleId,username);
             return ResponseEntity.status(HttpStatus.OK).body(Map.of("ticket",receipt));
-
-
-
     }
 
     @PostMapping("online/sales/{saleId}/completed")
