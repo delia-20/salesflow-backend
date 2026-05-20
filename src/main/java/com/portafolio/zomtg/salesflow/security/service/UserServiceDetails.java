@@ -1,9 +1,9 @@
 package com.portafolio.zomtg.salesflow.security.service;
 
-import com.portafolio.zomtg.salesflow.model.entities.Client;
-import com.portafolio.zomtg.salesflow.model.entities.User;
-import com.portafolio.zomtg.salesflow.repository.AuthRepository;
-import com.portafolio.zomtg.salesflow.repository.AuthRepositoryClients;
+import com.portafolio.zomtg.salesflow.clients.entity.Client;
+import com.portafolio.zomtg.salesflow.users.entity.User;
+import com.portafolio.zomtg.salesflow.auth.repository.AuthRepository;
+import com.portafolio.zomtg.salesflow.auth.repository.AuthRepositoryClients;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserServiceDetails implements UserDetailsService {

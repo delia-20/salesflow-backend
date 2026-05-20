@@ -1,15 +1,14 @@
 package com.portafolio.zomtg.salesflow;
 
-import com.portafolio.zomtg.salesflow.exception.NoEnoughStockException;
-import com.portafolio.zomtg.salesflow.model.entities.InventoryMovement;
-import com.portafolio.zomtg.salesflow.model.entities.Product;
-import com.portafolio.zomtg.salesflow.model.entities.User;
-import com.portafolio.zomtg.salesflow.model.enums.TypeInventory;
-import com.portafolio.zomtg.salesflow.repository.InventoryRepository;
-import com.portafolio.zomtg.salesflow.repository.ProductRepository;
-import com.portafolio.zomtg.salesflow.repository.StoreRepository;
-import com.portafolio.zomtg.salesflow.repository.UserRepository;
-import com.portafolio.zomtg.salesflow.service.InventoryService;
+import com.portafolio.zomtg.salesflow.products.exception.NoEnoughStockException;
+import com.portafolio.zomtg.salesflow.inventory.entity.InventoryMovement;
+import com.portafolio.zomtg.salesflow.products.entity.Product;
+import com.portafolio.zomtg.salesflow.inventory.enums.TypeInventory;
+import com.portafolio.zomtg.salesflow.inventory.repository.InventoryRepository;
+import com.portafolio.zomtg.salesflow.products.repository.ProductRepository;
+import com.portafolio.zomtg.salesflow.store.repository.StoreRepository;
+import com.portafolio.zomtg.salesflow.users.repository.UserRepository;
+import com.portafolio.zomtg.salesflow.inventory.service.InventoryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +16,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
 import java.util.UUID;

@@ -11,27 +11,19 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(NoEnoughStockException.class)
-    public ResponseEntity<?> handleStock(NoEnoughStockException ex){
-        Map<String,String> map = new HashMap<>();
-        map.put("message",ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(map);
-    }
 
-    @ExceptionHandler(ProductNoFound.class)
-    public ResponseEntity<?> handleProductNoFound(ProductNoFound ex){
-        Map<String,String> map = new HashMap<>();
-        map.put("message",ex.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(map);
-    }
 
     @ExceptionHandler(InvalidCredentials.class)
     public ResponseEntity<?> handleInvalidCredentials(InvalidCredentials ex){
         Map<String,String> map = new HashMap<>();
         map.put("message",ex.getMessage());
         return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(map);
+    }
+    @ExceptionHandler(UnauthorizedOperationException.class)
+    public ResponseEntity<?> handleUnauthorizedOperationException(UnauthorizedOperationException ex){
+        Map<String,String> map = new HashMap<>();
+        map.put("message",ex.getMessage());
+        return  ResponseEntity.status(HttpStatus.FORBIDDEN).body(map);
     }
 
     @ExceptionHandler(SystemInterErrorException.class)

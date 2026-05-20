@@ -1,18 +1,15 @@
 package com.portafolio.zomtg.salesflow;
 
 import com.portafolio.zomtg.salesflow.exception.InvalidCredentials;
-import com.portafolio.zomtg.salesflow.model.dto.AuthResponseDTO;
-import com.portafolio.zomtg.salesflow.model.dto.LoginDTO;
-import com.portafolio.zomtg.salesflow.model.entities.User;
-import com.portafolio.zomtg.salesflow.model.enums.Role;
-import com.portafolio.zomtg.salesflow.repository.AuthRepository;
-import com.portafolio.zomtg.salesflow.repository.AuthRepositoryClients;
-import com.portafolio.zomtg.salesflow.repository.ClientRepository;
-import com.portafolio.zomtg.salesflow.repository.UserRepository;
+import com.portafolio.zomtg.salesflow.auth.dto.AuthResponseDTO;
+import com.portafolio.zomtg.salesflow.auth.dto.LoginDTO;
+import com.portafolio.zomtg.salesflow.users.entity.User;
+import com.portafolio.zomtg.salesflow.users.enums.Role;
+import com.portafolio.zomtg.salesflow.auth.repository.AuthRepository;
+import com.portafolio.zomtg.salesflow.auth.repository.AuthRepositoryClients;
 import com.portafolio.zomtg.salesflow.security.service.JWTService;
-import com.portafolio.zomtg.salesflow.service.AuthService;
+import com.portafolio.zomtg.salesflow.auth.service.AuthService;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

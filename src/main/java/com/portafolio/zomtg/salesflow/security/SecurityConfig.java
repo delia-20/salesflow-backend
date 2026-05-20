@@ -1,6 +1,6 @@
 package com.portafolio.zomtg.salesflow.security;
 
-import com.portafolio.zomtg.salesflow.controller.JwtFilter;
+import com.portafolio.zomtg.salesflow.security.controller.JwtFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

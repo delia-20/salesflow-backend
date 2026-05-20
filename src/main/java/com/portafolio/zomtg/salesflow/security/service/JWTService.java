@@ -1,8 +1,7 @@
 package com.portafolio.zomtg.salesflow.security.service;
 
-import com.portafolio.zomtg.salesflow.model.entities.Client;
-import com.portafolio.zomtg.salesflow.model.entities.User;
-import com.portafolio.zomtg.salesflow.model.enums.Role;
+import com.portafolio.zomtg.salesflow.clients.entity.Client;
+import com.portafolio.zomtg.salesflow.users.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

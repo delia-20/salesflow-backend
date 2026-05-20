@@ -1,23 +1,21 @@
 package com.portafolio.zomtg.salesflow;
 
 import com.portafolio.zomtg.salesflow.exception.InvalidCredentials;
-import com.portafolio.zomtg.salesflow.model.dto.ProductDTO;
-import com.portafolio.zomtg.salesflow.model.entities.Product;
-import com.portafolio.zomtg.salesflow.model.entities.Store;
-import com.portafolio.zomtg.salesflow.model.entities.User;
-import com.portafolio.zomtg.salesflow.model.enums.Role;
-import com.portafolio.zomtg.salesflow.repository.ProductRepository;
-import com.portafolio.zomtg.salesflow.repository.StoreRepository;
-import com.portafolio.zomtg.salesflow.repository.UserRepository;
-import com.portafolio.zomtg.salesflow.service.InventoryService;
-import com.portafolio.zomtg.salesflow.service.ProductService;
-import org.junit.jupiter.api.AfterEach;
+import com.portafolio.zomtg.salesflow.products.dto.ProductDTO;
+import com.portafolio.zomtg.salesflow.products.entity.Product;
+import com.portafolio.zomtg.salesflow.store.entity.Store;
+import com.portafolio.zomtg.salesflow.users.entity.User;
+import com.portafolio.zomtg.salesflow.users.enums.Role;
+import com.portafolio.zomtg.salesflow.products.repository.ProductRepository;
+import com.portafolio.zomtg.salesflow.store.repository.StoreRepository;
+import com.portafolio.zomtg.salesflow.users.repository.UserRepository;
+import com.portafolio.zomtg.salesflow.inventory.service.InventoryService;
+import com.portafolio.zomtg.salesflow.products.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.List;
