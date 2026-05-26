@@ -1,11 +1,13 @@
 package com.portafolio.zomtg.salesflow.auth.dto;
 
+import com.portafolio.zomtg.salesflow.users.dto.RegisterUserRequest;
+import com.portafolio.zomtg.salesflow.users.dto.UserResponse;
 import com.portafolio.zomtg.salesflow.users.entity.User;
 
 public class AuthResponseDTO {
      private String token;
-     private User user;
-     public AuthResponseDTO(String token, User user) {
+     private UserResponse user;
+     public AuthResponseDTO(String token, UserResponse user) {
          this.token = token;
          this.user = user;
 
@@ -19,11 +21,11 @@ public class AuthResponseDTO {
         this.token = token;
     }
 
-    public User getUser() {
+    public UserResponse getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserResponse user) {
         this.user = user;
     }
 }

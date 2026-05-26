@@ -1,6 +1,8 @@
 package com.portafolio.zomtg.salesflow.users.controller;
 
 
+import com.portafolio.zomtg.salesflow.users.dto.RegisterUserRequest;
+import com.portafolio.zomtg.salesflow.users.dto.UserResponse;
 import com.portafolio.zomtg.salesflow.users.entity.User;
 import com.portafolio.zomtg.salesflow.users.service.OwnerService;
 import com.portafolio.zomtg.salesflow.users.service.UserService;
@@ -26,17 +28,17 @@ public class UserController {
 
 
     @PostMapping("auth/register")
-    public ResponseEntity<?> registerUser(@RequestBody User user){
+    public ResponseEntity<?> registerUser(@RequestBody RegisterUserRequest request) {
 
-        User result=userService.saveUser(user);
+        UserResponse result=userService.saveUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of( "User saved successfully", result));
     }
 
 
     @PostMapping("users")
-    public ResponseEntity<?> saveUser(@RequestBody User user) {
+    public ResponseEntity<?> saveUser(@RequestBody RegisterUserRequest user) {
 
-        User result=userService.saveUser(user);
+        UserResponse result=userService.saveUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("User Saved successfully", result));
     }
 

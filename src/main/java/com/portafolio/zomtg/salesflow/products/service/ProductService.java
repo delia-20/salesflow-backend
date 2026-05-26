@@ -3,8 +3,11 @@ package com.portafolio.zomtg.salesflow.products.service;
 import com.portafolio.zomtg.salesflow.exception.BusinessOperationException;
 import com.portafolio.zomtg.salesflow.exception.InvalidCredentials;
 import com.portafolio.zomtg.salesflow.products.dto.ProductDTO;
+import com.portafolio.zomtg.salesflow.products.dto.ProductRequest;
+import com.portafolio.zomtg.salesflow.products.dto.ProductResponse;
 import com.portafolio.zomtg.salesflow.products.entity.Product;
 import com.portafolio.zomtg.salesflow.inventory.service.InventoryService;
+import com.portafolio.zomtg.salesflow.products.mapper.ProductMapper;
 import com.portafolio.zomtg.salesflow.store.entity.Store;
 import com.portafolio.zomtg.salesflow.users.entity.User;
 import com.portafolio.zomtg.salesflow.products.repository.ProductRepository;
@@ -25,16 +28,23 @@ public class ProductService {
     private StoreRepository storeRepository;
     InventoryService inventoryService;
 
+    ProductMapper  productMapper;
+
     @Autowired
-    public ProductService(ProductRepository productRepository, UserRepository userRepository, StoreRepository storeRepository, InventoryService inventoryService) {
+    public ProductService(ProductRepository productRepository,
+                          UserRepository userRepository,
+                          StoreRepository storeRepository,
+                          InventoryService inventoryService,ProductMapper productMapper) {
         this.productRepository = productRepository;
         this.userRepository = userRepository;
         this.storeRepository = storeRepository;
         this.inventoryService = inventoryService;
+        this.productMapper = productMapper;
     }
 
     @Transactional
-    public Product save (Product product, String username) {
+    public ProductResponse save (ProductRequest request, String username) {
+        Product product = productMapper.toProduct(request);
         System.out.println("storeid " + product.getStoreId());
         User owner = userRepository.findUserByUsername(username).orElseThrow();
         Store store = storeRepository.findById(product.getStoreId()).orElseThrow();
@@ -49,10 +59,10 @@ public class ProductService {
             store.setNumProducts(store.getNumProducts() + 1);//
             store.setNumTotalItems(store.getNumTotalItems() + product.getExistence());
             storeRepository.save(store);
-            productRepository.save(product);
+            product=productRepository.save(product);
             inventoryService.addNewProduct(owner.getOwnerId(), product.getId(), quantity);
 
-            return product;
+            return productMapper.toProductResponse(product);
         }catch (ObjectOptimisticLockingFailureException e) {
             throw new BusinessOperationException("Not enough products");
         }

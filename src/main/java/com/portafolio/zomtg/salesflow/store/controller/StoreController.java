@@ -1,5 +1,7 @@
 package com.portafolio.zomtg.salesflow.store.controller;
 
+import com.portafolio.zomtg.salesflow.store.dto.StoreRequest;
+import com.portafolio.zomtg.salesflow.store.dto.StoreResponse;
 import com.portafolio.zomtg.salesflow.store.entity.Store;
 import com.portafolio.zomtg.salesflow.store.service.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +24,10 @@ public class StoreController {
 
     @PreAuthorize("hasRole('OWNER')")
     @PostMapping("store")
-    public ResponseEntity<?> saveStore(@RequestBody Store store, Authentication authentication) {
+    public ResponseEntity<?> saveStore(@RequestBody StoreRequest store, Authentication authentication) {
         String username = authentication.getName();
-        Store store1=storeService.saveStore(store,username);
-        return ResponseEntity.ok().body(store1);
+        StoreResponse reponse =storeService.saveStore(store,username);
+        return ResponseEntity.ok().body(reponse);
 
     }
 

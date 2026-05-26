@@ -9,6 +9,7 @@ import com.portafolio.zomtg.salesflow.auth.repository.AuthRepository;
 import com.portafolio.zomtg.salesflow.auth.repository.AuthRepositoryClients;
 import com.portafolio.zomtg.salesflow.security.service.JWTService;
 import com.portafolio.zomtg.salesflow.auth.service.AuthService;
+import com.portafolio.zomtg.salesflow.users.mapper.UserMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,6 +31,7 @@ public class AuthServiceTest {
     AuthService authService;
     AuthRepository  authRepository;
     User user;
+    UserMapper userMapper;
     JWTService jwtService;
     AuthRepositoryClients authRepositoryClients;
 
@@ -43,7 +45,8 @@ public class AuthServiceTest {
         jwtService = mock(JWTService.class);
         authRepositoryClients = mock(AuthRepositoryClients.class);
         user = mock(User.class);
-        authService = new AuthService(authRepository,jwtService,authRepositoryClients);
+        userMapper=new UserMapper();
+        authService = new AuthService(authRepository,jwtService,authRepositoryClients,userMapper);
 
         UUID uuid = UUID.fromString("17ac43b7-16eb-4bb6-afc5-f7e2d56d3b4c");
         when(user.getOwnerId()).thenReturn(uuid);
@@ -65,7 +68,7 @@ public class AuthServiceTest {
         AuthResponseDTO response = authService.loginCredentials(new LoginDTO("admin","admin123"));
 
         assertEquals("jwt-token", response.getToken());
-        assertEquals("admin", response.getUser().getUsername());
+        assertEquals("admin", response.getUser().username());
     }
     @Test
     public void shouldThrowException_whenUserDoesNotExist(){

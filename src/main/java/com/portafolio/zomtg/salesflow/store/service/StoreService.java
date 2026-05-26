@@ -2,7 +2,10 @@ package com.portafolio.zomtg.salesflow.store.service;
 
 import com.portafolio.zomtg.salesflow.exception.InvalidCredentials;
 import com.portafolio.zomtg.salesflow.exception.ObjectNotFound;
+import com.portafolio.zomtg.salesflow.store.dto.StoreRequest;
+import com.portafolio.zomtg.salesflow.store.dto.StoreResponse;
 import com.portafolio.zomtg.salesflow.store.entity.Store;
+import com.portafolio.zomtg.salesflow.store.mapper.StoreMapper;
 import com.portafolio.zomtg.salesflow.users.entity.User;
 import com.portafolio.zomtg.salesflow.store.repository.StoreRepository;
 import com.portafolio.zomtg.salesflow.users.repository.UserRepository;
@@ -18,20 +21,24 @@ import java.util.UUID;
 public class StoreService {
     StoreRepository storeRepository;
     UserRepository userRepository;
+    StoreMapper storeMapper;
     private  final PasswordEncoder passwordEncoder=new BCryptPasswordEncoder();
     @Autowired
-    public void setStoreRepository(StoreRepository storeRepository, UserRepository userRepository) {
+    public void setStoreRepository(StoreRepository storeRepository, UserRepository userRepository, StoreMapper storeMapper) {
         this.storeRepository = storeRepository;
         this.userRepository = userRepository;
+        this.storeMapper = storeMapper;
     }
 
-    public Store saveStore(Store store,String username) {
+    public StoreResponse saveStore(StoreRequest request, String username) {
         User owner=userRepository.findUserByUsername(username).orElseThrow(()->new InvalidCredentials("User Not Found"));
         UUID ownerId=owner.getOwnerId();
+        Store store=storeMapper.toStore(request);
         store.setOwnerId(ownerId);
         store.setPassword(passwordEncoder.encode(store.getPassword()));
         store=storeRepository.save(store);
-        return store;
+
+        return storeMapper.toStoreResponse(store);
     }
 
     public Store getStore(UUID storeId, String username) {

@@ -1,5 +1,6 @@
 package com.portafolio.zomtg.salesflow.sales.controller;
 
+import com.portafolio.zomtg.salesflow.sales.dto.SaleResponse;
 import com.portafolio.zomtg.salesflow.sales.dto.SalesRequestDTO;
 import com.portafolio.zomtg.salesflow.receipt.entity.Receipt;
 import com.portafolio.zomtg.salesflow.sales.entity.Sale;
@@ -33,7 +34,7 @@ public class SaleController {
     @PreAuthorize("hasRole('OWNER') or hasRole('EMPLOYEE')")
     public ResponseEntity<?> createSale(@RequestBody SalesRequestDTO request, Authentication authentication) {
         String username = authentication.getName();
-        Sale result =saleService.createSale(request,username);
+        SaleResponse result =saleService.createSale(request,username);
         return ResponseEntity.ok().body(result);
     }
 

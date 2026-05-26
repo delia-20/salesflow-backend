@@ -5,9 +5,12 @@ import com.portafolio.zomtg.salesflow.exception.InvalidCredentials;
 import com.portafolio.zomtg.salesflow.exception.ObjectNotFound;
 import com.portafolio.zomtg.salesflow.exception.UnauthorizedOperationException;
 import com.portafolio.zomtg.salesflow.store.entity.Store;
+import com.portafolio.zomtg.salesflow.users.dto.RegisterUserRequest;
+import com.portafolio.zomtg.salesflow.users.dto.UserResponse;
 import com.portafolio.zomtg.salesflow.users.entity.User;
 import com.portafolio.zomtg.salesflow.users.enums.Role;
 import com.portafolio.zomtg.salesflow.store.repository.StoreRepository;
+import com.portafolio.zomtg.salesflow.users.mapper.UserMapper;
 import com.portafolio.zomtg.salesflow.users.repository.UserRepository;
 import lombok.NonNull;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,15 +25,18 @@ import java.util.UUID;
 public class UserService {
     UserRepository userRepository;
     StoreRepository storeRepository;
+    UserMapper userMapper;
     private final PasswordEncoder passwordEncoder= new BCryptPasswordEncoder();
 
-    public UserService(UserRepository userRepository, StoreRepository storeRepository) {
+    public UserService(UserRepository userRepository, StoreRepository storeRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.storeRepository = storeRepository;
+        this.userMapper = userMapper;
     }
 
-    public User saveUser(User user) {
-        System.out.println("Saving user: " + user);
+    public UserResponse saveUser(RegisterUserRequest request) {
+        System.out.println("Saving user: " + request.name());
+        User user= userMapper.toEntity(request);
         if(verifyExistingUser(user.getUsername()) || verifyExistingUser(user.getEmail())){
              throw new BusinessOperationException("User already exists");
         }
@@ -51,7 +57,8 @@ public class UserService {
         }
 
         user=userRepository.save(user);
-        return user;
+
+        return userMapper.toResponse(user);
     }
 
     private boolean existStoreAndOwner(UUID ownerId, UUID storeId) {

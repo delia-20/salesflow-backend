@@ -1,10 +1,14 @@
 package com.portafolio.zomtg.salesflow;
 
+import com.portafolio.zomtg.salesflow.auth.service.AuthorizationService;
 import com.portafolio.zomtg.salesflow.exception.InvalidCredentials;
+import com.portafolio.zomtg.salesflow.exception.UnauthorizedOperationException;
 import com.portafolio.zomtg.salesflow.products.entity.Product;
 import com.portafolio.zomtg.salesflow.products.repository.ProductRepository;
+import com.portafolio.zomtg.salesflow.sales.dto.SaleResponse;
 import com.portafolio.zomtg.salesflow.sales.dto.SalesItemsRequestDTO;
 import com.portafolio.zomtg.salesflow.sales.dto.SalesRequestDTO;
+import com.portafolio.zomtg.salesflow.sales.mapper.SaleMapper;
 import com.portafolio.zomtg.salesflow.users.enums.Role;
 import com.portafolio.zomtg.salesflow.sales.enums.StatusSale;
 import com.portafolio.zomtg.salesflow.sales.entity.Sale;
@@ -50,6 +54,11 @@ public class SaleServiceTest {
     ReceiptService receiptService;
     @Mock
     InventoryService inventoryService;
+    @Mock
+    AuthorizationService  authorizationService;
+    @Mock
+    SaleMapper saleMapper;
+
 
     @Spy
     @InjectMocks
@@ -62,12 +71,14 @@ public class SaleServiceTest {
     Sale sale;
 
 
+
     String username;
     UUID storeId;
     UUID ownerId;
     UUID productId;
     UUID wrongOwnerId;
     UUID userId;
+    UUID saleId;
 
     @BeforeEach
     public void setup() {
@@ -76,14 +87,8 @@ public class SaleServiceTest {
         ownerId=UUID.fromString("17ac43b7-16eb-4bb6-afc5-f7e2d56d3b4c");
         productId = UUID.fromString("3b1485cf-fa17-4e74-9c78-267c8a4f6647");
         userId=UUID.fromString("01129ab6-7910-4a64-b160-e0941b8c005f");
-//        saleService=new SaleService(saleRepository,
-//                userRepository,
-//                storeRepository,
-//                productRepository,
-//                saleItemRepository,
-//                receiptService,
-//                inventoryService
-//                );
+        saleId= UUID.fromString("4ac7507a-8e89-4c4a-bb80-13fe3e5bda1d");
+
 
     }
 
@@ -119,28 +124,49 @@ public class SaleServiceTest {
         salesRequestDTO.setStoreId(storeId);
         salesRequestDTO.setItems(saleItems);
 
-        when(userRepository.findUserByUsername(username)).thenReturn(Optional.of(user));
-        when(storeRepository.findById(storeId)).thenReturn(Optional.of(store));
-        when(saleRepository.save(any(Sale.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(authorizationService.validateStoreAccess(username,storeId)).thenReturn(user);
+        when(saleMapper.toSaleResponse(any(Sale.class)))
+                .thenAnswer(invocation -> {
+
+                    Sale s = invocation.getArgument(0);
+
+                    return new SaleResponse(
+                            s.getId(),
+                            s.getStoreId(),
+                            s.getEmployeeId(),
+                            s.getDatetime(),
+                            s.getTotal(),
+                            s.getStatus(),
+                            s.getPaymentMethod(),
+                            s.getClientId(),
+                            s.getSaleNumber()
+                    );
+                });
+        when(saleRepository.save(any(Sale.class)))
+                .thenAnswer(invocation -> {
+                    Sale sale = invocation.getArgument(0);
+                    if(sale.getId() == null){
+                        sale.setId(saleId);
+                    }
+
+                    return sale;
+                });
         when(saleItemRepository.save(any(SaleItem.class))).thenReturn(new SaleItem());
-        doReturn("saleNumber").when(saleService).generateSaleNumber();
+        doReturn("saleNumber")
+                .when(saleService)
+                .generateSaleNumber();
         when(productRepository.findById(productId)).thenReturn(Optional.of(product));
 
-        Sale sale=saleService.createSale(salesRequestDTO,username);
+        SaleResponse sale=saleService.createSale(salesRequestDTO,username);
 
-        ArgumentCaptor<Sale> captor = ArgumentCaptor.forClass(Sale.class);
-        verify(saleRepository, times(2)).save(captor.capture());
 
-        List<Sale> sales = captor.getAllValues();
-        Sale sale1=sales.get(0);
-        Sale sale2=sales.get(1);
-        assertEquals(storeId, sale2.getStoreId());
-          assertEquals(userId, sale2.getEmployeeId());
-        assertEquals(StatusSale.IN_PROGRESS, sale2.getStatus());
-        assertEquals("saleNumber", sale2.getSaleNumber());
-        assertEquals(5.0, sale2.getTotal());
+        assertEquals(storeId, sale.storeId());
+        assertEquals(userId, sale.employeeId());
+        assertEquals(StatusSale.IN_PROGRESS,sale.status());
+        assertEquals("saleNumber", sale.saleNumber());
+        assertEquals(5.0, sale.total());
 
-        verify(inventoryService).createSale(sale.getId(),productId,1);
+        verify(inventoryService).createSale(saleId,productId,1);
         verify(saleItemRepository).save(any(SaleItem.class));
     }
 
@@ -177,13 +203,31 @@ public class SaleServiceTest {
         salesRequestDTO.setStoreId(storeId);
         salesRequestDTO.setItems(saleItems);
 
-        when(userRepository.findUserByUsername(username)).thenReturn(Optional.of(user));
+
         when(saleRepository.save(any(Sale.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(saleItemRepository.save(any(SaleItem.class))).thenReturn(new SaleItem());
         doReturn("saleNumber").when(saleService).generateSaleNumber();
         when(productRepository.findById(productId)).thenReturn(Optional.of(product));
+        when(authorizationService.validateStoreAccess(username,storeId)).thenReturn(user);
+        when(saleMapper.toSaleResponse(any(Sale.class)))
+                .thenAnswer(invocation -> {
 
-        Sale sale=saleService.createSale(salesRequestDTO,username);
+                    Sale s = invocation.getArgument(0);
+
+                    return new SaleResponse(
+                            s.getId(),
+                            s.getStoreId(),
+                            s.getEmployeeId(),
+                            s.getDatetime(),
+                            s.getTotal(),
+                            s.getStatus(),
+                            s.getPaymentMethod(),
+                            s.getClientId(),
+                            s.getSaleNumber()
+                    );
+                });
+
+        SaleResponse sale=saleService.createSale(salesRequestDTO,username);
 
         ArgumentCaptor<Sale> captor = ArgumentCaptor.forClass(Sale.class);
         verify(saleRepository, times(2)).save(captor.capture());
@@ -197,7 +241,7 @@ public class SaleServiceTest {
         assertEquals("saleNumber", sale2.getSaleNumber());
         assertEquals(5.0, sale2.getTotal());
 
-        verify(inventoryService).createSale(sale.getId(),productId,1);
+        verify(inventoryService).createSale(sale.id(),productId,1);
         verify(saleItemRepository).save(any(SaleItem.class));
     }
 
@@ -236,11 +280,10 @@ public class SaleServiceTest {
         SalesRequestDTO salesRequestDTO = new SalesRequestDTO();
         salesRequestDTO.setStoreId(storeId);
         salesRequestDTO.setItems(saleItems);
+        when(authorizationService.validateStoreAccess(username,storeId)).thenThrow(new UnauthorizedOperationException("Denied access"));
 
-        when(userRepository.findUserByUsername(username)).thenReturn(Optional.of(user));
-        when(storeRepository.findById(storeId)).thenReturn(Optional.of(store));
 
-        assertThrows(InvalidCredentials.class, ()->saleService.createSale(salesRequestDTO,username) ) ;
+        assertThrows(UnauthorizedOperationException.class, ()->saleService.createSale(salesRequestDTO,username) ) ;
         verify(saleRepository,never()).save(any(Sale.class));
 
 
@@ -291,9 +334,7 @@ public class SaleServiceTest {
         assertEquals(saleId,sale.getId());
         assertEquals(StatusSale.CANCELLED,sale.getStatus());
 
-
-
-
     }
+
 
 }

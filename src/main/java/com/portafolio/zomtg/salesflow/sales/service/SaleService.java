@@ -1,5 +1,6 @@
 package com.portafolio.zomtg.salesflow.sales.service;
 
+import com.portafolio.zomtg.salesflow.auth.service.AuthorizationService;
 import com.portafolio.zomtg.salesflow.exception.InvalidCredentials;
 import com.portafolio.zomtg.salesflow.exception.ObjectNotFound;
 import com.portafolio.zomtg.salesflow.products.exception.ProductNoFound;
@@ -7,9 +8,11 @@ import com.portafolio.zomtg.salesflow.exception.SystemInterErrorException;
 import com.portafolio.zomtg.salesflow.products.entity.Product;
 import com.portafolio.zomtg.salesflow.products.repository.ProductRepository;
 import com.portafolio.zomtg.salesflow.receipt.entity.Receipt;
+import com.portafolio.zomtg.salesflow.sales.dto.SaleResponse;
 import com.portafolio.zomtg.salesflow.sales.dto.SalesItemsRequestDTO;
 import com.portafolio.zomtg.salesflow.sales.dto.SalesRequestDTO;
 import com.portafolio.zomtg.salesflow.sales.enums.PaymentMethod;
+import com.portafolio.zomtg.salesflow.sales.mapper.SaleMapper;
 import com.portafolio.zomtg.salesflow.users.enums.Role;
 import com.portafolio.zomtg.salesflow.sales.enums.StatusSale;
 import com.portafolio.zomtg.salesflow.sales.entity.Sale;
@@ -38,7 +41,7 @@ import java.util.UUID;
 @Service
 public class SaleService {
     @PersistenceContext
-            private EntityManager entityManager;
+    private EntityManager entityManager;
 
     SaleRepository saleRepository;
     UserRepository userRepository;
@@ -47,6 +50,8 @@ public class SaleService {
     SaleItemRepository saleItemRepository;
     ReceiptService receiptService;
     InventoryService inventoryService;
+    SaleMapper saleMapper;
+    AuthorizationService  authorizationService;
 
     @Autowired
     public SaleService(SaleRepository saleRepository,
@@ -55,7 +60,9 @@ public class SaleService {
                        ProductRepository productRepository,
                        SaleItemRepository saleItemRepository,
                        ReceiptService receiptService,
-                       InventoryService inventoryService
+                       InventoryService inventoryService,
+                       SaleMapper saleMapper,
+                       AuthorizationService authorizationService
     ) {
         this.saleRepository = saleRepository;
         this.userRepository = userRepository;
@@ -64,30 +71,17 @@ public class SaleService {
         this.saleItemRepository = saleItemRepository;
         this.receiptService = receiptService;
         this.inventoryService = inventoryService;
+        this.saleMapper = saleMapper;
+        this.authorizationService = authorizationService;
     }
 
 
     @Transactional
-    public Sale createSale(SalesRequestDTO request, String username) {
-        User owner = userRepository.findUserByUsername(username)
-                .orElseThrow(()-> new InvalidCredentials("No allowed actions"));
-        UUID userId;
-        if(owner.getRole().equals(Role.EMPLOYEE) ){
-            if(owner.getStoreId().equals(request.getStoreId())){
-                userId=owner.getId();
-               return saveSale(request,userId);
-            }
+    public SaleResponse createSale(SalesRequestDTO request, String username) {
 
-        }else if(owner.getRole().equals(Role.OWNER) ){
-            Store store=storeRepository.findById(request.getStoreId()).orElseThrow(()-> new ObjectNotFound("Store not found"));
-            if(store.getOwnerId().equals(owner.getOwnerId())){
-                userId=owner.getId();
-
-               return saveSale(request,userId);
-
-            }
-        }
-        throw  new InvalidCredentials("No allowed actions");
+        User user= authorizationService.validateStoreAccess(username,request.getStoreId());
+        UUID userId=user.getId();
+        return saleMapper.toSaleResponse(saveSale(request,userId));
     }
 
 @Transactional

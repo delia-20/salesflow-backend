@@ -2,7 +2,10 @@ package com.portafolio.zomtg.salesflow;
 
 import com.portafolio.zomtg.salesflow.exception.InvalidCredentials;
 import com.portafolio.zomtg.salesflow.products.dto.ProductDTO;
+import com.portafolio.zomtg.salesflow.products.dto.ProductRequest;
+import com.portafolio.zomtg.salesflow.products.dto.ProductResponse;
 import com.portafolio.zomtg.salesflow.products.entity.Product;
+import com.portafolio.zomtg.salesflow.products.mapper.ProductMapper;
 import com.portafolio.zomtg.salesflow.store.entity.Store;
 import com.portafolio.zomtg.salesflow.users.entity.User;
 import com.portafolio.zomtg.salesflow.users.enums.Role;
@@ -14,6 +17,7 @@ import com.portafolio.zomtg.salesflow.products.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -48,7 +52,9 @@ public class ProductServiceTest {
     @Mock
     Store store;
     @Mock
-    Product product;
+    Product product1;
+
+    ProductMapper productMapper;
 
 
     @BeforeEach
@@ -60,22 +66,25 @@ public class ProductServiceTest {
         productId = UUID.fromString("3b1485cf-fa17-4e74-9c78-267c8a4f6647");
         wrongOwnerId=UUID.fromString("01129ab6-7910-4a64-b160-e0941b8c005f");
 
+        productMapper = new ProductMapper();
 
-        productService= new ProductService(productRepository,userRepository,storeRepository,inventoryService);
+
+        productService= new ProductService(productRepository,userRepository,storeRepository,inventoryService,productMapper);
     }
 
     @Test
     public void shouldSaveProductAndUpdateStore_whenValidOwner(){
-        Product product = new Product(
+        ProductRequest product = new ProductRequest(
                 "product",
                 " ",
                 5.00,
                 "image",
                 "category",
                 3,
+                true,
                 storeId
         );
-        product.setId(productId);
+        //product.setId(productId);
         user=new User();
         user.setOwnerId(ownerId);
         user.setRole(Role.OWNER);
@@ -86,38 +95,50 @@ public class ProductServiceTest {
         store.setNumTotalItems(0);
         store.setNumProducts(0);
 
+        Product product1=productMapper.toProduct(product);
+        product1.setId(productId);
+
         when(userRepository.findUserByUsername(username)).thenReturn(Optional.of(user));
         when(storeRepository.findById(storeId)).thenReturn(Optional.of(store));
         when(storeRepository.save(any(Store.class))).thenReturn(store);
-        when(productRepository.save(any(Product.class))).thenReturn(product);
-        when(inventoryService.addNewProduct(ownerId,productId,product.getExistence())).thenReturn("success");
-        Product result=productService.save(product,username);
+
+        when(productRepository.save(any(Product.class))).thenAnswer(invocationOnMock ->
+        {
+            Product result = invocationOnMock.getArgument(0);
+            result.setId(productId);
+            return result;
+        });
+
+        when(inventoryService.addNewProduct(ownerId,productId,product.existence())).thenReturn("success");
+        ProductResponse result=productService.save(product,username);
+        ArgumentCaptor<Product> captor = ArgumentCaptor.forClass(Product.class);
+        verify(productRepository).save(captor.capture());
+        Product savedProduct=captor.getValue();
+
+
 
         verify(userRepository,times(1)).findUserByUsername(username);
-        verify(productRepository).save(product);
         verify(storeRepository).save(any(Store.class));
-        verify(inventoryService).addNewProduct(ownerId,productId,product.getExistence());
+        verify(inventoryService).addNewProduct(ownerId,productId,product.existence());
         assertEquals(1,store.getNumProducts());
-        assertEquals(3,product.getExistence());
-        assertEquals(product,result);
-
-
-
-
+        assertEquals(3,savedProduct.getExistence());
+        assertEquals("product",savedProduct.getName());
     }
 
     @Test
     public void shouldSaveProductAndUpdateStore_whenInvalidOwner(){
-        Product product = new Product(
+        ProductRequest product = new ProductRequest(
                 "product",
                 " ",
                 5.00,
                 "image",
                 "category",
                 3,
+                true,
                 storeId
         );
-        product.setId(productId);
+        Product product1= productMapper.toProduct(product);
+        product1.setId(productId);
         user=new User();
         user.setOwnerId(wrongOwnerId);
         user.setRole(Role.OWNER);

@@ -1,6 +1,8 @@
 package com.portafolio.zomtg.salesflow.products.controller;
 
 import com.portafolio.zomtg.salesflow.products.dto.ProductDTO;
+import com.portafolio.zomtg.salesflow.products.dto.ProductRequest;
+import com.portafolio.zomtg.salesflow.products.dto.ProductResponse;
 import com.portafolio.zomtg.salesflow.products.entity.Product;
 import com.portafolio.zomtg.salesflow.products.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +26,9 @@ public class ProductController {
     }
 
     @PostMapping("products")
-    public ResponseEntity<?>  save(@RequestBody Product product, Authentication authentication) {
+    public ResponseEntity<?>  save(@RequestBody ProductRequest product, Authentication authentication) {
         String username = authentication.getName();
-       Product result=productService.save(product,username);
+       ProductResponse result=productService.save(product,username);
        return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
