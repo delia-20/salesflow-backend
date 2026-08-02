@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class HomeController {
     @GetMapping("/health")
     public String home() {
-        return " Sales Management System API is running!-------------------version 2 revisar pipeline let's go";
+        return " Sales Management System API is running \\n!-------------------version 2 revisar pipeline let's go";
     }
 
     @GetMapping("/home")
