@@ -48,7 +48,7 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "docker-compose.yml"
-          target: "~/salesflow"
+          target: "/home/ubuntu/salesflow"
           rm: true
 
 
