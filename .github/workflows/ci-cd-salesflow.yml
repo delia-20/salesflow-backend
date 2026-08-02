@@ -49,6 +49,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "docker-compose.yml"
           target: "~/salesflow"
+          rm: true
 
 
       - name: Deploy to EC2
