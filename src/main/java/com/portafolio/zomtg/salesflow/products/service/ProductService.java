@@ -154,4 +154,14 @@ public class ProductService {
         }
         throw  new InvalidCredentials("Invalid credentials, you can't activate this product");
     }
+
+    public ProductResponse getProductById(String username, UUID productId) {
+        User owner = userRepository.findUserByUsername(username).orElseThrow();
+        Product product=productRepository.findById(productId).orElseThrow();
+        Store store=storeRepository.findById(product.getStoreId()).orElseThrow();
+        if(!store.getOwnerId().equals(owner.getOwnerId())){
+            throw new InvalidCredentials("Invalid credentials");
+        }
+        return productMapper.toProductResponse(product);
+    }
 }

@@ -41,19 +41,24 @@ public class ProductController {
     }
 
     @PreAuthorize("hasRole('OWNER') or hasRole('EMPLOYEE')")
+    @GetMapping("products/{productId}")
+        public ResponseEntity<?> getProductById(@PathVariable("productId") UUID productId, Authentication authentication) {
+            String username = authentication.getName();
+            ProductResponse response= productService.getProductById(username,productId);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+
+    @PreAuthorize("hasRole('OWNER') or hasRole('EMPLOYEE')")
     @PutMapping("products/{productId}")
     public ResponseEntity<?>updateProduct(@PathVariable("productId") UUID productId, @RequestBody ProductDTO request, Authentication authentication) {
         String username = authentication.getName();
 
         Product result=productService.updateProduct(productId,request,username);
         return ResponseEntity.status(HttpStatus.OK).body(result);
-
-
-
     }
 
     @PreAuthorize("hasRole('OWNER') or hasRole('EMPLOYEE')")
-    @DeleteMapping("product/{productId}")
+    @DeleteMapping("products/{productId}")
     public ResponseEntity<?>deleteProduct(@PathVariable("productId") UUID productId, Authentication authentication) {
         String username = authentication.getName();
         boolean result= productService.deleteProduct(productId,username);
