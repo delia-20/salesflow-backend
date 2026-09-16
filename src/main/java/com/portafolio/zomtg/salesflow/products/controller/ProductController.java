@@ -82,7 +82,7 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.OK).body(result);
     }
     @PreAuthorize("hasRole('OWNER')")
-    @GetMapping("products/{storeId}")
+    @GetMapping("products/store/{storeId}")
     public ResponseEntity<?> getProductByStore(@PathVariable("storeId") UUID storeId, Authentication authentication) {
         String username = authentication.getName();
         List<Product> result=productService.getByStore(username,storeId);
