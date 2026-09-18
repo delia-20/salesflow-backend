@@ -24,7 +24,8 @@ public class User {
     private String name;
     private String surname;
     @Enumerated(EnumType.STRING)
-    private Role role; // OWNER, EMPLOYEE, CLIENT
+    private Role
+            role; // OWNER, EMPLOYEE, CLIENT
     @Column(unique = true, nullable = false)
     private String username;
     @Column(unique = true, nullable = false)

@@ -1,5 +1,7 @@
 package com.portafolio.zomtg.salesflow.users.controller;
 
+import com.portafolio.zomtg.salesflow.users.dto.EmployeeUpdateRequest;
+import com.portafolio.zomtg.salesflow.users.dto.UserResponse;
 import com.portafolio.zomtg.salesflow.users.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -58,6 +60,23 @@ public class OwnerController {
 
         List<User> employees= ownerService.getEmployeesByOwnerId(username);
         return ResponseEntity.status(HttpStatus.OK).body(employees);
+    }
+
+    @PreAuthorize("hasRole('OWNER')")
+    @GetMapping("owner/employees/{employeeId}")
+    public ResponseEntity<?> getEmployeeById(@PathVariable UUID employeeId, Authentication authentication) {
+        String username=authentication.getName();
+        UserResponse response=ownerService.getEmployeeById(username,employeeId);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PreAuthorize("hasRole('OWNER')")
+    @PutMapping("owner/employees/{employeeId}")
+    public  ResponseEntity<?>  updateEmployeeById(@PathVariable UUID employeeId, @RequestBody EmployeeUpdateRequest request, Authentication authentication) {
+        String username=authentication.getName();
+        UserResponse response=ownerService.updateEmployee(username, employeeId, request);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+
     }
 
 
