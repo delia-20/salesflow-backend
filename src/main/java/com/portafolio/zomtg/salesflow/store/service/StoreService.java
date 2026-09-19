@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,11 +42,11 @@ public class StoreService {
         return storeMapper.toStoreResponse(store);
     }
 
-    public Store getStore(UUID storeId, String username) {
+    public StoreResponse getStore(UUID storeId, String username) {
         Store s=storeRepository.findById(storeId).orElseThrow(()-> new ObjectNotFound("Store Not Found"));
         User owner=userRepository.findUserByUsername(username).orElseThrow(()->new ObjectNotFound("User Not Found"));
         if(s.getOwnerId().equals(owner.getOwnerId())){
-           return s;
+           return storeMapper.toStoreResponse(s);
         }
        throw new InvalidCredentials("Inappropriate credentials");
 
@@ -63,9 +64,13 @@ public class StoreService {
 
     }
 
-    public List<Store> getAll(String username) {
+    public List<StoreResponse> getAll(String username) {
         User owner=userRepository.findUserByUsername(username).orElseThrow();
-
-        return storeRepository.findStoreByOwnerId(owner.getOwnerId());
+        List<Store> result= storeRepository.findStoreByOwnerId(owner.getOwnerId());
+        List<StoreResponse> responses= new ArrayList<StoreResponse>();
+        for(Store store:result){
+            responses.add(storeMapper.toStoreResponse(store));
+        }
+        return responses;
     }
 }

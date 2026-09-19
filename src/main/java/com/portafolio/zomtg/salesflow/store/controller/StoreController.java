@@ -23,7 +23,7 @@ public class StoreController {
     }
 
     @PreAuthorize("hasRole('OWNER')")
-    @PostMapping("store")
+    @PostMapping("stores")
     public ResponseEntity<?> saveStore(@RequestBody StoreRequest store, Authentication authentication) {
         String username = authentication.getName();
         StoreResponse reponse =storeService.saveStore(store,username);
@@ -32,14 +32,14 @@ public class StoreController {
     }
 
     @PreAuthorize("hasRole('OWNER')")
-    @GetMapping("store/{storeId}")
+    @GetMapping("stores/{storeId}")
     public ResponseEntity<?> getStore(
             @PathVariable UUID storeId,
             Authentication authentication) {
 
         String username = authentication.getName();
 
-        Store result = storeService.getStore(storeId, username);
+        StoreResponse result = storeService.getStore(storeId, username);
 
         return  ResponseEntity.ok(result);
     }
@@ -48,13 +48,13 @@ public class StoreController {
     public ResponseEntity<?> getAllStores(Authentication authentication) {
         String username = authentication.getName();
 
-        List<Store> result= storeService.getAll(username);
+        List<StoreResponse> result= storeService.getAll(username);
         return ResponseEntity.ok().body(result);
 
     }
 
     @PreAuthorize("hasRole('OWNER')")
-    @DeleteMapping("store/{storeId}")
+    @DeleteMapping("stores/{storeId}")
     public ResponseEntity<?> deleteStore(@PathVariable UUID storeId,Authentication authentication) {
         String username = authentication.getName();
         storeService.deleteStore(storeId,username);
